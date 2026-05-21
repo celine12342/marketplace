@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maison — Enter Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --ivory: #faf8f3;
+      --gold: #b8975a;
+      --gold-light: #d4b07a;
+      --charcoal: #1a1814;
+      --warm-grey: #7a756d;
+      --border: rgba(184,151,90,0.25);
+      --border-focus: rgba(184,151,90,0.7);
+      --error: #c0614a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--ivory);
+      color: var(--charcoal);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.6;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 64px 40px 40px;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 28px auto 0;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 64px;
+      left: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--warm-grey);
+      text-decoration: none;
+      transition: color 0.3s;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.1s;
+    }
+
+    .back-link:hover { color: var(--gold); }
+
+    .back-link svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      transition: transform 0.3s;
+    }
+
+    .back-link:hover svg { transform: translateX(-2px); }
+
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.15s;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      color: var(--charcoal);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .subtitle {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--warm-grey);
+      margin-top: 14px;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.45s;
+    }
+
+    /* Form container */
+    .form-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.55s;
+    }
+
+    /* Section label */
+    .form-section-label {
+      font-size: 8px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .form-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Field groups */
+    .field-row {
+      display: grid;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .field-row.two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 580px) {
+      .field-row.two-col { grid-template-columns: 1fr; }
+      .form-wrapper { padding: 40px 24px 80px; }
+      .back-link { left: 24px; }
+    }
+
+    /* Field */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--warm-grey);
+      transition: color 0.3s;
+    }
+
+    .field:focus-within label {
+      color: var(--gold);
+    }
+
+    /* Required star */
+    .req {
+      color: var(--gold);
+      margin-left: 4px;
+    }
+
+    /* Inputs */
+    input[type="text"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--charcoal);
+      padding: 10px 0;
+      outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="url"]::placeholder,
+    input[type="number"]::placeholder,
+    textarea::placeholder {
+      color: rgba(122,117,109,0.4);
+      font-size: 12px;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-bottom-color: var(--gold);
+    }
+
+    input.error,
+    select.error,
+    textarea.error {
+      border-bottom-color: var(--error);
+    }
+
+    .error-msg {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--error);
+      display: none;
+    }
+
+    .field.has-error .error-msg { display: block; }
+    .field.has-error label { color: var(--error); }
+
+    textarea {
+      resize: none;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    /* Select styling */
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: '';
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--warm-grey);
+      pointer-events: none;
+      transition: border-top-color 0.3s;
+    }
+
+    .select-wrapper:focus-within::after {
+      border-top-color: var(--gold);
+    }
+
+    select {
+      cursor: pointer;
+      padding-right: 20px;
+    }
+
+    select option { background: var(--ivory); }
+
+    /* Radio group — badge */
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      padding: 10px 0 4px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--warm-grey);
+      transition: color 0.3s;
+    }
+
+    .radio-label input[type="radio"] {
+      display: none;
+    }
+
+    .radio-indicator {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      position: relative;
+      transition: border-color 0.3s;
+      flex-shrink: 0;
+    }
+
+    .radio-indicator::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 0.2s ease;
+    }
+
+    .radio-label input[type="radio"]:checked + .radio-indicator {
+      border-color: var(--gold);
+    }
+
+    .radio-label input[type="radio"]:checked + .radio-indicator::after {
+      transform: scale(1);
+    }
+
+    .radio-label:has(input:checked) {
+      color: var(--charcoal);
+    }
+
+    /* Toggle — featured */
+    .toggle-field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .toggle-info { flex: 1; }
+
+    .toggle-info strong {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      font-weight: 400;
+      color: var(--charcoal);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .toggle-info span {
+      font-size: 10px;
+      color: var(--warm-grey);
+      letter-spacing: 0.05em;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      display: none;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: var(--warm-grey);
+      border-radius: 50%;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: rgba(184,151,90,0.15);
+      border-color: var(--gold);
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(18px);
+      background: var(--gold);
+    }
+
+    /* Image preview */
+    .img-preview-wrap {
+      margin-top: 12px;
+      display: none;
+    }
+
+    .img-preview-wrap.visible { display: block; }
+
+    .img-preview {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      display: block;
+      filter: brightness(0.97) contrast(1.02);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 36px 0;
+    }
+
+    /* Submit */
+    .submit-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .submit-note {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--warm-grey);
+      line-height: 1.5;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--charcoal);
+      color: var(--cream);
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 16px 36px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+      z-index: 0;
+    }
+
+    .btn-submit:not(:disabled):hover::before {
+      transform: scaleX(1);
+    }
+
+    .btn-submit:not(:disabled):hover {
+      color: var(--charcoal);
+    }
+
+    .btn-submit span,
+    .btn-submit .btn-icon {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-submit .btn-icon {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      transition: transform 0.3s;
+    }
+
+    .btn-submit:not(:disabled):hover .btn-icon {
+      transform: translateX(3px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid rgba(250,248,243,0.3);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text,
+    .btn-submit.loading .btn-icon { display: none; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .submit-area {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .btn-submit { width: 100%; justify-content: center; }
+    }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--ivory);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .success-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .success-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      transition: stroke-dashoffset 0.6s ease 0.3s;
+    }
+
+    .success-overlay.visible .success-icon svg {
+      stroke-dashoffset: 0;
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: var(--charcoal);
+      margin-bottom: 12px;
+    }
+
+    .success-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .success-sub {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--warm-grey);
+      margin-bottom: 32px;
+    }
+
+    .success-progress {
+      width: 160px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .success-progress-bar {
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 3s linear;
+    }
+
+    .success-overlay.visible .success-progress-bar {
+      transform: scaleX(1);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 40px 48px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .footer-sub {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--warm-grey);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="success-overlay" aria-live="polite">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <p class="success-title">Product <em>Added</em></p>
+  <p class="success-sub">Returning to collection</p>
+  <div class="success-progress">
+    <div class="success-progress-bar" id="progress-bar"></div>
+  </div>
+</div>
+
+<header>
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Collection
+  </a>
+  <p class="eyebrow">Maison — Management</p>
+  <h1>Enter <em>Product</em></h1>
+  <p class="subtitle">Add a new piece to the collection</p>
+</header>
+
+<div class="form-wrapper">
+
+  <p class="form-section-label">Product Identity</p>
+
+  <div class="field-row">
+    <div class="field" id="field-name">
+      <label for="name">Product Name <span class="req">*</span></label>
+      <input type="text" id="name" name="name" placeholder="e.g. Nuit Dorée Eau de Parfum" autocomplete="off"/>
+      <span class="error-msg">Please enter a product name</span>
+    </div>
+  </div>
+
+  <div class="field-row two-col">
+    <div class="field" id="field-category">
+      <label for="category">Category <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="category" name="category">
+          <option value="">Select category</option>
+          <option value="Fragrance">Fragrance</option>
+          <option value="Skincare">Skincare</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Home">Home</option>
+        </select>
+      </div>
+      <span class="error-msg">Please select a category</span>
+    </div>
+    <div class="field" id="field-badge">
+      <label>Badge</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="badge" value=""/>
+          <span class="radio-indicator"></span>
+          None
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="badge" value="new" checked/>
+          <span class="radio-indicator"></span>
+          New
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="badge" value="sale"/>
+          <span class="radio-indicator"></span>
+          Sale
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="desc">Description</label>
+      <textarea id="desc" name="desc" placeholder="A brief, evocative description of the product…"></textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="form-section-label">Pricing</p>
+
+  <div class="field-row two-col">
+    <div class="field" id="field-price">
+      <label for="price">Price <span class="req">*</span></label>
+      <input type="text" id="price" name="price" placeholder="e.g. $285"/>
+      <span class="error-msg">Please enter a price</span>
+    </div>
+    <div class="field">
+      <label for="originalPrice">Original Price <span style="font-size:8px;letter-spacing:.1em;text-transform:none;color:var(--warm-grey);font-style:italic">(leave blank if no sale)</span></label>
+      <input type="text" id="originalPrice" name="originalPrice" placeholder="e.g. $340"/>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="form-section-label">Presentation</p>
+
+  <div class="field-row">
+    <div class="field" id="field-image">
+      <label for="image">Image URL <span class="req">*</span></label>
+      <input type="url" id="image" name="image" placeholder="https://…"/>
+      <span class="error-msg">Please enter a valid image URL</span>
+      <div class="img-preview-wrap" id="img-preview-wrap">
+        <img class="img-preview" id="img-preview" src="" alt="Preview"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <label class="toggle-field" for="featured-toggle">
+      <div class="toggle-info">
+        <strong>Featured Product</strong>
+        <span>Featured items span two columns and are displayed prominently</span>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="featured-toggle" name="featured"/>
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+  </div>
+
+  <div class="submit-area">
+    <p class="submit-note">Fields marked <span style="color:var(--gold)">*</span> are required.<br/>Data is submitted to your Google Sheet via Apps Script.</p>
+    <button class="btn-submit" id="submit-btn" type="button">
+      <span class="btn-text">Submit Product</span>
+      <svg class="btn-icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Maison</div>
+  <p class="footer-sub">Est. 1921 &nbsp;·&nbsp; Paris &nbsp;·&nbsp; New York &nbsp;·&nbsp; Tokyo</p>
+</footer>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────────────────
+  // Replace with your Google Apps Script Web App URL
+  // Deploy your Apps Script as a Web App with "Anyone" access
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxu3II3lEO12QuZvcmkklMaixxP_4wHYBptw6QNy4vC4d2w_6VeJhbpq8iUtUwMUCq8/exec";
+
+  // ── IMAGE PREVIEW ────────────────────────────────────────────────────────────
+  const imageInput = document.getElementById('image');
+  const previewWrap = document.getElementById('img-preview-wrap');
+  const previewImg = document.getElementById('img-preview');
+
+  let previewTimeout;
+  imageInput.addEventListener('input', () => {
+    clearTimeout(previewTimeout);
+    const url = imageInput.value.trim();
+    if (!url) {
+      previewWrap.classList.remove('visible');
+      return;
+    }
+    previewTimeout = setTimeout(() => {
+      previewImg.onload = () => previewWrap.classList.add('visible');
+      previewImg.onerror = () => previewWrap.classList.remove('visible');
+      previewImg.src = url;
+    }, 600);
+  });
+
+  // ── VALIDATION ────────────────────────────────────────────────────────────────
+  function validateField(id, condition) {
+    const field = document.getElementById('field-' + id);
+    if (!field) return condition;
+    const input = field.querySelector('input, select, textarea');
+    if (condition) {
+      field.classList.remove('has-error');
+      if (input) input.classList.remove('error');
+    } else {
+      field.classList.add('has-error');
+      if (input) input.classList.add('error');
+    }
+    return condition;
+  }
+
+  function getFormData() {
+    return {
+      name: document.getElementById('name').value.trim(),
+      category: document.getElementById('category').value,
+      desc: document.getElementById('desc').value.trim(),
+      price: document.getElementById('price').value.trim(),
+      originalPrice: document.getElementById('originalPrice').value.trim(),
+      badge: document.querySelector('input[name="badge"]:checked')?.value || '',
+      image: document.getElementById('image').value.trim(),
+      featured: document.getElementById('featured-toggle').checked ? 'true' : 'false'
+    };
+  }
+
+  function validate(data) {
+    let valid = true;
+    valid = validateField('name', data.name.length > 0) && valid;
+    valid = validateField('category', data.category.length > 0) && valid;
+    valid = validateField('price', data.price.length > 0) && valid;
+    valid = validateField('image', data.image.length > 0) && valid;
+    return valid;
+  }
+
+  // ── SHOW SUCCESS ──────────────────────────────────────────────────────────────
+  function showSuccess() {
+    const overlay = document.getElementById('success-overlay');
+    overlay.classList.add('visible');
+    // Trigger redirect after progress bar completes (3s)
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 3200);
+  }
+
+  // ── SUBMIT ────────────────────────────────────────────────────────────────────
+  const submitBtn = document.getElementById('submit-btn');
+
+  submitBtn.addEventListener('click', async () => {
+    const data = getFormData();
+    if (!validate(data)) return;
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.classList.add('loading');
+
+    // If no URL configured, simulate success
+    if (!WEB_APP_URL || WEB_APP_URL === "https://script.google.com/macros/s/AKfycbxu3II3lEO12QuZvcmkklMaixxP_4wHYBptw6QNy4vC4d2w_6VeJhbpq8iUtUwMUCq8/exec") {
+      setTimeout(showSuccess, 1200);
+      return;
+    }
+
+    // Build URL params — variable names match CSV column headers
+    const params = new URLSearchParams({
+      name: data.name,
+      category: data.category,
+      desc: data.desc,
+      price: data.price,
+      originalPrice: data.originalPrice,
+      badge: data.badge,
+      image: data.image,
+      featured: data.featured
+    });
+
+    try {
+      const res = await fetch(`${WEB_APP_URL}?${params.toString()}`, {
+        method: 'GET',
+        mode: 'no-cors' // Required for Google Apps Script deployed as Web App
+      });
+      // no-cors means we can't read the response, but submission went through
+      showSuccess();
+    } catch (err) {
+      console.error('Submission error:', err);
+      // Restore button on error
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('loading');
+
+      // Show inline error
+      const submitArea = document.querySelector('.submit-area');
+      let errNote = submitArea.querySelector('.submit-error');
+      if (!errNote) {
+        errNote = document.createElement('p');
+        errNote.className = 'submit-error';
+        errNote.style.cssText = 'font-size:10px;letter-spacing:.1em;color:var(--error);margin-top:12px;width:100%;';
+        submitArea.appendChild(errNote);
+      }
+      errNote.textContent = 'Submission failed. Please check your connection and try again.';
+    }
+  });
+
+  // Clear errors on input
+  ['name', 'category', 'price', 'image'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      const field = document.getElementById('field-' + id);
+      if (field) {
+        field.classList.remove('has-error');
+        el.classList.remove('error');
+      }
+    });
+  });
+</script>
+</body>
+</html>
