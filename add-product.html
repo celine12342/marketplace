@@ -886,8 +886,8 @@
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
-    // Stop submission if no Apps Script URL is configured
-    if (!WEB_APP_URL) {
+    // Stop if no Apps Script URL is configured
+if (!WEB_APP_URL) {
   alert("The Google Apps Script URL has not been configured.");
   submitBtn.disabled = false;
   submitBtn.classList.remove('loading');
