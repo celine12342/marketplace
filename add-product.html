@@ -886,11 +886,13 @@
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
-    // If no URL configured, simulate success
-    if (!WEB_APP_URL || WEB_APP_URL === "https://script.google.com/macros/s/AKfycbxu3II3lEO12QuZvcmkklMaixxP_4wHYBptw6QNy4vC4d2w_6VeJhbpq8iUtUwMUCq8/exec") {
-      setTimeout(showSuccess, 1200);
-      return;
-    }
+    // Stop submission if no Apps Script URL is configured
+    if (!WEB_APP_URL) {
+  alert("The Google Apps Script URL has not been configured.");
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  return;
+}
 
     // Build URL params — variable names match CSV column headers
     const params = new URLSearchParams({
